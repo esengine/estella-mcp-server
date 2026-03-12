@@ -178,9 +178,9 @@ To play esanim via timeline: entity needs both TimelinePlayer and SpriteAnimator
     server.tool(
         'new_scene',
         'Create a new empty scene (discards current scene)',
-        {},
-        async () => {
-            const result = await bridge.post('/scene/new', {});
+        { force: { type: 'boolean', description: 'Skip save confirmation dialog (default: true)' } },
+        async ({ force = true }) => {
+            const result = await bridge.post('/scene/new', { force });
             return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] };
         },
     );
