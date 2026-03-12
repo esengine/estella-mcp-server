@@ -1,6 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { Agent, fetch as undiciFetch } from 'undici';
+
+const localAgent = new Agent({ connect: { timeout: 5_000 } });
 
 interface BridgeInfo {
     port: number;
@@ -54,7 +57,7 @@ export class BridgeClient {
 
     async get(path: string): Promise<unknown> {
         if (!this.baseUrl_) throw new Error('Editor is not running');
-        const res = await fetch(`${this.baseUrl_}${path}`);
+        const res = await undiciFetch(`${this.baseUrl_}${path}`, { dispatcher: localAgent });
         if (!res.ok) {
             const body = await res.text();
             throw new Error(`Bridge error (${res.status}): ${body}`);
@@ -64,10 +67,11 @@ export class BridgeClient {
 
     async post(path: string, body: unknown): Promise<unknown> {
         if (!this.baseUrl_) throw new Error('Editor is not running');
-        const res = await fetch(`${this.baseUrl_}${path}`, {
+        const res = await undiciFetch(`${this.baseUrl_}${path}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
+            dispatcher: localAgent,
         });
         if (!res.ok) {
             const text = await res.text();
