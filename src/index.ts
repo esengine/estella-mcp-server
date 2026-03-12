@@ -7,6 +7,7 @@ import { registerSceneTools } from './tools/scene.js';
 import { registerStateTools } from './tools/state.js';
 import { registerActionTools } from './tools/actions.js';
 import { registerVisualTools } from './tools/visual.js';
+import { registerUITools } from './tools/ui.js';
 import { registerResources } from './resources.js';
 
 const bridge = new BridgeClient();
@@ -20,6 +21,7 @@ registerSceneTools(server, bridge);
 registerStateTools(server, bridge);
 registerActionTools(server, bridge);
 registerVisualTools(server, bridge);
+registerUITools(server, bridge);
 registerResources(server, bridge);
 
 async function main(): Promise<void> {
