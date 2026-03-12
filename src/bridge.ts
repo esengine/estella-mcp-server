@@ -20,17 +20,25 @@ export class BridgeClient {
         try {
             files = await readdir(dir);
         } catch {
+            console.error(`[MCP] Bridge directory not found: ${dir}`);
+            return false;
+        }
+
+        const bridgeFiles = files.filter(f => f.startsWith('bridge-') && f.endsWith('.json'));
+        if (bridgeFiles.length === 0) {
+            console.error(`[MCP] No bridge files in ${dir}`);
             return false;
         }
 
         const bridges: BridgeInfo[] = [];
-        for (const file of files) {
-            if (!file.startsWith('bridge-') || !file.endsWith('.json')) continue;
+        for (const file of bridgeFiles) {
             try {
                 const content = await readFile(join(dir, file), 'utf-8');
                 const info = JSON.parse(content) as BridgeInfo;
                 if (isProcessAlive(info.pid)) {
                     bridges.push(info);
+                } else {
+                    console.error(`[MCP] Stale bridge file ${file} (pid ${info.pid} not alive)`);
                 }
             } catch {
                 continue;
@@ -89,7 +97,10 @@ function isProcessAlive(pid: number): boolean {
     try {
         process.kill(pid, 0);
         return true;
-    } catch {
+    } catch (e: unknown) {
+        if (e && typeof e === 'object' && 'code' in e && e.code === 'EPERM') {
+            return true;
+        }
         return false;
     }
 }
