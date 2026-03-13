@@ -8,7 +8,7 @@ export function registerResources(
     server.resource(
         'editor://sdk-api',
         'editor://sdk-api',
-        'ESEngine SDK API reference: defineComponent, defineSystem, Query, Schedule, built-in components, script template',
+        { description: 'ESEngine SDK API reference: defineComponent, defineSystem, Query, Schedule, built-in components, script template' },
         async () => ({
             contents: [{
                 uri: 'editor://sdk-api',
@@ -21,7 +21,7 @@ export function registerResources(
     server.resource(
         'editor://components',
         'editor://components',
-        'All registered component types grouped by category',
+        { description: 'All registered component types grouped by category' },
         async () => {
             const result = await bridge.get('/components/list');
             return {
@@ -37,7 +37,7 @@ export function registerResources(
     server.resource(
         'editor://assets',
         'editor://assets',
-        'All project assets with UUIDs, paths, and types',
+        { description: 'All project assets with UUIDs, paths, and types' },
         async () => {
             const result = await bridge.get('/assets/list');
             return {
