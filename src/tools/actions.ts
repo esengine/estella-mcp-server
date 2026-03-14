@@ -103,7 +103,16 @@ Use get_component_schema for full field list of any component.`,
 
     server.tool(
         'create_script',
-        'Create a new TypeScript script file in the project. Read editor://sdk-api resource first to understand the API.',
+        `Create a new TypeScript script file in the project.
+
+IMPORTANT: Read the editor://sdk-api resource FIRST to understand the API patterns.
+
+Key patterns for user scripts:
+- Import from 'esengine' (e.g., defineComponent, defineSystem, Query, Commands, etc.)
+- Use addSystem/addStartupSystem/addSystemToSchedule to register systems (top-level calls)
+- Use Commands() parameter + cmds.insertResource() inside a startup system to register resources
+- Export components via defineComponent for editor auto-discovery
+- Do NOT use setup() function pattern — use global registration functions`,
         {
             name: z.string().describe('Script name (e.g., "PlayerController")'),
             content: z.string().optional().describe('Script content (default: component template)'),

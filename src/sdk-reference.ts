@@ -174,6 +174,22 @@ export const GameState = defineResource('GameState', {
     level: 1,
     paused: false,
 });
+
+// IMPORTANT: Resources must be registered via Commands in a startup system
+addStartupSystem(defineSystem(
+    [Commands()],
+    (cmds) => {
+        cmds.insertResource(GameState, { score: 0, level: 1, paused: false });
+    },
+));
+
+// Then read/write in other systems
+addSystem(defineSystem(
+    [ResMut(GameState)],
+    (state) => {
+        state.modify(s => { s.score += 1; });
+    },
+));
 \`\`\`
 
 ## defineEvent
